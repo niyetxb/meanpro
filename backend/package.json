@@ -1,0 +1,27 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
+    "eslint": "^9.22.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.5.3"
+  },
+  "lint-staged": {
+    "frontend/**/*.js": "cd frontend && eslint --fix",
+    "backend/**/*.js": "cd backend && eslint --fix",
+    "frontend/**/*.css": "cd frontend && stylelint --fix"
+  }
+}
