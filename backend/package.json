@@ -5,10 +5,13 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "dependencies": {
-    "express": "^4.21.2"
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "fs": "^0.0.1-security"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
@@ -17,11 +20,11 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.4.3",
     "nodemon": "^3.1.9",
-    "prettier": "^3.5.3"
+    "prettier": "^3.5.3",
+    "stylelint": "^16.15.0"
   },
   "lint-staged": {
-    "frontend/**/*.js": "cd frontend && eslint --fix",
-    "backend/**/*.js": "cd backend && eslint --fix",
-    "frontend/**/*.css": "cd frontend && stylelint --fix"
+    "backend/**/*.js": "eslint --fix",
+    "backend/**/*.json": "prettier --write"
   }
 }
