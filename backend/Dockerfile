@@ -5,6 +5,9 @@ WORKDIR /app
 COPY package.json ./
 RUN npm install
 
+# Установка nodemon глобально
+RUN npm install -g nodemon
+
 COPY . .
 
-CMD ["npm", "run", "dev"]
+CMD ["nodemon", "index.js"]

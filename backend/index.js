@@ -1,51 +1,52 @@
 const express = require("express");
 const fs = require("fs");
+const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
 dotenv.config();
 
 const app = express();
-const port = 5000
+const PORT = process.env.PORT || 5000;
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/storedb";
 
-// Middleware для логирования запросов
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next();
+// Подключение к MongoDB
+mongoose
+  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.log("MongoDB connection error:", err));
+
+app.use(express.json());
+
+// Модель Product
+const productSchema = new mongoose.Schema({
+  name: String,
+  price: Number,
+  category: String,
 });
 
-// Middleware для аутентификации (пример)
-const authMiddleware = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || authHeader !== "Bearer secret-token") {
-    return res.status(403).json({ error: "Unauthorized" });
+const Product = mongoose.model("Product", productSchema);
+
+// CRUD для Product
+app.get("/api/products", async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: "Error fetching products" });
   }
-  next();
-};
-
-// Эндпоинт для чтения файла (асинхронно)
-app.get("/read-file", (req, res) => {
-  fs.readFile("data.txt", "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).json({ error: "File read error" });
-    }
-    res.json({ content: data });
-  });
 });
 
-// Защищенный маршрут
-app.get("/secure", authMiddleware, (req, res) => {
-  res.json({ message: "You have access!" });
-});
-
-// Обработка ошибок
-app.use((err, req, res, next) => {
-  console.error("Error:", err.message);
-  res.status(500).json({ error: "Something went wrong" });
+app.post("/api/products", async (req, res) => {
+  try {
+    const { name, price, category } = req.body;
+    const newProduct = new Product({ name, price, category });
+    await newProduct.save();
+    res.json(newProduct);
+  } catch (err) {
+    res.status(500).json({ error: "Error creating product" });
+  }
 });
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-
-
